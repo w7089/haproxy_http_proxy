@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  http_client:
+    build: ./http_client
+    image: http_client
+    depends_on:
+      - http_proxy        
+    networks: 
+      - default
+  http_server:
+    image: hashicorp/http-echo
+    expose: 
+      - 5678
+    command: ['-text="hello world"']
+    networks: 
+      - default    
+  http_proxy:
+    image: haproxy:2.3
+    expose: 
+      - 80
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - http_server    
+    networks: 
+      default: 
+
+networks: 
+  default:
